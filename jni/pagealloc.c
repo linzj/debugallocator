@@ -22,10 +22,8 @@ static intptr_t gethint(size_t s)
     while (1) {
         r = __atomic_add_fetch(&hint, s, __ATOMIC_SEQ_CST);
         if (r >= 0xc0000000) {
-            hint = 0;
-#if defined(__arm__)
-            asm ("dmb\n" : : : "memory");
-#endif // __arm__
+            int expect = 0;
+            __atomic_compare_exchange_n(&hint, &expect, r, 0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
             continue;
         }
         return r;
