@@ -18,9 +18,10 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE    := libdlmalloc
 #LOCAL_SRC_FILES := malloc.c
-LOCAL_SRC_FILES := pagealloc.c
+LOCAL_SRC_FILES := linker_allocator.cpp linker_memory.cpp
+#LOCAL_SRC_FILES := pagealloc.c
 LOCAL_LDFLAGS += -Wl,--version-script=$(LOCAL_PATH)/version_script.txt
 LOCAL_LDLIBS += -llog
-LOCAL_CFLAGS += -funwind-tables
+LOCAL_CFLAGS += -funwind-tables -std=c++11
 
 include $(BUILD_SHARED_LIBRARY)

@@ -12,6 +12,7 @@
 #define USE_RECURSIVE_LOCK 0
 #define USE_SPIN_LOCKS 0
 #define DEFAULT_MMAP_THRESHOLD (64U * 1024U)
+#define DEBUG 1
 
 #define malloc_getpagesize getpagesize()/*
   This is a version (aka dlmalloc) of malloc/free/realloc written by
@@ -715,7 +716,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #define USE_BUILTIN_FFS 0
 #endif  /* USE_BUILTIN_FFS */
 #ifndef USE_DEV_RANDOM
-#define USE_DEV_RANDOM 0
+#define USE_DEV_RANDOM 1
 #endif  /* USE_DEV_RANDOM */
 #ifndef NO_MALLINFO
 #define NO_MALLINFO 0
