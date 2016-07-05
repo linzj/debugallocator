@@ -21,5 +21,6 @@ LOCAL_MODULE    := libdlmalloc
 LOCAL_SRC_FILES := pagealloc.c
 LOCAL_LDFLAGS += -Wl,--version-script=$(LOCAL_PATH)/version_script.txt
 LOCAL_LDLIBS += -llog
+LOCAL_CFLAGS += -funwind-tables
 
 include $(BUILD_SHARED_LIBRARY)

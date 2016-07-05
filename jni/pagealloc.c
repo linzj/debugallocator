@@ -1,5 +1,6 @@
 #include <sys/mman.h>
 #include <stdint.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
@@ -14,15 +15,17 @@
 #define TAG "LINZJ"
 #define LOGD(...) \
     __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
+#undef LOGD
+#define LOGD(...)
 static uintptr_t hint = 0x10000;
 
 static intptr_t gethint(size_t s)
 {
-    intptr_t r;
+    uintptr_t r;
     while (1) {
         r = __atomic_add_fetch(&hint, s, __ATOMIC_SEQ_CST);
         if (r >= 0xc0000000) {
-            int expect = 0;
+            uintptr_t expect = 0;
             __atomic_compare_exchange_n(&hint, &expect, r, 0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
             continue;
         }
