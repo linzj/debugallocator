@@ -1,5 +1,6 @@
 {
     global: malloc; calloc; free; realloc; memalign;
+            posix_memalign;
     local: *;
 };
 

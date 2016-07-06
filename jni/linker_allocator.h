@@ -134,8 +134,8 @@ class LinkerMemoryAllocator {
   // Note that this implementation of realloc never shrinks allocation
   void* realloc(void* ptr, size_t size);
   void free(void* ptr);
- private:
   void* alloc_mmap(size_t size);
+ private:
   page_info* get_page_info(void* ptr);
   LinkerSmallObjectAllocator* get_small_object_allocator(uint32_t type);
 

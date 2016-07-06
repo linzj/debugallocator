@@ -244,6 +244,8 @@ LinkerMemoryAllocator::LinkerMemoryAllocator() {
     uint32_t type = i + kSmallObjectMinSizeLog2;
     allocators_[i].init(type, 1 << type, allocator_names[i]);
   }
+  int prctlret = prctl(PR_SET_DUMPABLE, 1, 0, 0);
+  __android_log_print(ANDROID_LOG_DEBUG, "LINZJ", "prctlret: %d.\n", prctlret);
 }
 
 void* LinkerMemoryAllocator::alloc_mmap(size_t size) {

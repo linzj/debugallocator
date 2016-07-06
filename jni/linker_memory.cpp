@@ -66,3 +66,25 @@ void free(void* ptr) {
   AutoLock lock(g_lock);
   get_global().free(ptr);
 }
+
+void* memalign(size_t alignment, size_t bytes)
+{
+  if (alignment <= 16) {
+      return malloc(bytes);
+  }
+  AutoLock lock(g_lock);
+  void* ptr = get_global().alloc_mmap(bytes + alignment);
+  uintptr_t ptrint = reinterpret_cast<uintptr_t>(ptr);
+  ptrint = (ptrint + alignment - 1) & ~(alignment - 1);
+  return reinterpret_cast<void*>(ptrint);
+}
+
+int posix_memalign(void **memptr, size_t alignment, size_t size)
+{
+    void* result = memalign(alignment, size);
+    if (result == NULL) {
+        return ENOMEM;
+    }
+    *memptr = result;
+    return 0;
+}
