@@ -1,5 +1,7 @@
 #include <sys/cdefs.h>
+#include <sys/prctl.h>
 #include <stddef.h>
+#include <fcntl.h>
 
 /* Configure dlmalloc. */
 #define HAVE_GETPAGESIZE 1
@@ -1652,6 +1654,43 @@ unsigned char _BitScanReverse(unsigned long *index, unsigned long mask);
 #define CMFAIL               ((char*)(MFAIL)) /* defined for convenience */
 
 #if HAVE_MMAP
+
+/*
+ * Local definitions of custom prctl arguments to set a vma name in some kernels
+ */
+#define BIONIC_PR_SET_VMA               0x53564d41
+#define BIONIC_PR_SET_VMA_ANON_NAME     0
+
+/*
+ * Names a region of memory.  The name is expected to show up in /proc/pid/maps
+ * and /proc/pid/smaps.  There is no guarantee that it will work, and it if it
+ * does work it is likely to only work on memory that was allocated with
+ * mmap(MAP_ANONYMOUS), and only on regions that are page aligned.  name should
+ * be a pointer to a string that is valid for as long as the memory is mapped,
+ * preferably a compile-time constant string.
+ *
+ * Returns -1 on error and sets errno.  If it returns an error naming page
+ * aligned anonymous memory the kernel doesn't support naming, and an alternate
+ * method of naming memory should be used (like ashmem).
+ */
+static int __bionic_name_mem(void *addr, size_t len, const char *name)
+{
+    return prctl(BIONIC_PR_SET_VMA, BIONIC_PR_SET_VMA_ANON_NAME,
+                 addr, len, name);
+}
+
+static void* named_anonymous_mmap(size_t length)
+{
+    void* ret;
+    ret = mmap(NULL, length, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+    if (ret == MAP_FAILED)
+        return ret;
+
+    __bionic_name_mem(ret, length, "linzj_malloc");
+
+    return ret;
+}
+#define MMAP named_anonymous_mmap
 
 #ifndef WIN32
 #define MUNMAP_DEFAULT(a, s)  munmap((a), (s))
