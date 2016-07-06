@@ -6332,3 +6332,13 @@ History:
          structure of old version,  but most details differ.)
 
 */
+void* malloc(size_t) __attribute__((alias("dlmalloc")));
+
+void* calloc(size_t item_count, size_t item_size) __attribute__((alias("dlcalloc")));
+
+void* realloc(void* p, size_t byte_count) __attribute__((alias("dlrealloc")));
+void free(void* ptr) __attribute__((alias("dlfree")));
+
+void* memalign(size_t alignment, size_t bytes) __attribute__((alias("dlmemalign")));
+
+int posix_memalign(void **memptr, size_t alignment, size_t size) __attribute__((alias("dlposix_memalign")));;
