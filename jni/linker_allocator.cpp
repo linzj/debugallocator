@@ -79,9 +79,6 @@ LinkerSmallObjectAllocator::LinkerSmallObjectAllocator()
     : type_(0), name_(nullptr), block_size_(0), free_pages_cnt_(0), free_blocks_list_(nullptr) {}
 
 void* LinkerSmallObjectAllocator::alloc() {
-  if (block_size_ == 0) {
-      __builtin_trap();
-  }
   if (free_blocks_list_ == nullptr) {
     alloc_page();
   }
@@ -109,8 +106,7 @@ void* LinkerSmallObjectAllocator::alloc() {
 
   memset(block_record, 0, block_size_);
   if (reinterpret_cast<uintptr_t>(block_record) & 7) {
-      __android_log_print(ANDROID_LOG_ERROR, "LINZJ", "error block: %p, block_size_: %zu, free_blocks_list_: %p\n", block_record, block_size_, free_blocks_list_);
-      __builtin_trap();
+      __libc_fatal("error block: %p, block_size_: %zu, free_blocks_list_: %p\n", block_record, block_size_, free_blocks_list_);
   }
   return block_record;
 }
@@ -142,7 +138,7 @@ void LinkerSmallObjectAllocator::free_page(linker_vector_t::iterator page_record
 
 void LinkerSmallObjectAllocator::free(void* ptr) {
   if (reinterpret_cast<uintptr_t>(ptr) & 15) {
-      __builtin_trap();
+      __libc_fatal("free: invalid pointer: %p", ptr);
   }
   auto page_record = find_page_record(ptr);
 

@@ -20,16 +20,16 @@
 #include <stdlib.h>
 #include <sys/cdefs.h>
 #include <sys/mman.h>
+#include <sys/prctl.h>
 #include <stddef.h>
 #include <unistd.h>
 #include <android/log.h>
 
 #include <vector>
-#include <sys/prctl.h>
 
 #define PR_SET_VMA   0x53564d41
 #define PR_SET_VMA_ANON_NAME    0
-#define __libc_fatal(...) ({__android_log_print(ANDROID_LOG_ERROR, "LINZJ", __VA_ARGS__); __builtin_trap();})
+#define __libc_fatal(...) ({__android_log_print(ANDROID_LOG_ERROR, "LINZJ", __VA_ARGS__); sleep(5); __builtin_trap();})
 const uint32_t kSmallObjectMaxSizeLog2 = 10;
 const uint32_t kSmallObjectMinSizeLog2 = 4;
 const uint32_t kSmallObjectAllocatorsCount = kSmallObjectMaxSizeLog2 - kSmallObjectMinSizeLog2 + 1;
